@@ -32,12 +32,6 @@ class App {
     }
     public listen() {
         if (this.production) {
-            // config sv SSL
-            const privateKey = fs.readFileSync('/etc/letsencrypt/live/yowork.optech.vn/privkey.pem');
-            const certificate = fs.readFileSync('/etc/letsencrypt/live/yowork.optech.vn/fullchain.pem');
-            const credentials = { key: privateKey, cert: certificate };
-
-            const httpsServer = https.createServer(credentials, this.app);
             httpsServer.listen(this.port, () => Logger.info(`Server is running on port ${this.port}`));
         } else {
             this.app.listen(this.port, () => {
