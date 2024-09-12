@@ -17,7 +17,7 @@ class App {
 
     constructor(routes: IRoute[]) {
         this.app = express();
-        this.port = process.env.PORT || 3001;
+        this.port = process.env.PORT || 10000 ;
         this.connectMySql();
         this.initialMiddlewares()
         this.initialRoutes(routes)
