@@ -9,8 +9,6 @@ import Logger from "@core/utils/logger";
 import path from "path";
 const multer = require('multer');
 import database from "@core/config/database";
-import * as fs from 'fs';
-import * as https from 'https';
 
 class App {
     public app: express.Application
@@ -32,7 +30,6 @@ class App {
     }
     public listen() {
         if (this.production) {
-            httpsServer.listen(this.port, () => Logger.info(`Server is running on port ${this.port}`));
         } else {
             this.app.listen(this.port, () => {
                 Logger.info(`Server is running on port ${this.port}`)
