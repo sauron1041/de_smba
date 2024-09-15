@@ -18,9 +18,9 @@ class Database {
                 // connectionLimit: DB_CONNECTION_LIMIT ? parseInt(DB_CONNECTION_LIMIT) : 10,
                 connectTimeout: 60000,
                 queueLimit: 0,
-                // ssl: {
-                //     ca: fs.readFileSync(path.resolve(__dirname, "../../../ca.pem"))
-                // }
+                ssl: {
+                    ca: fs.readFileSync(path.resolve(__dirname, "../../../ca.pem"))
+                }
             }
             );
             await this.getConnection()
