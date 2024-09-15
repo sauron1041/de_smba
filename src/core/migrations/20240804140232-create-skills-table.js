@@ -1,33 +1,32 @@
 exports.up = function (db, callback) {
-  db.createTable('service', {
+  db.createTable('skill', {
     id: { type: 'int', notNull: true, autoIncrement: true, primaryKey: true },
     name: { type: 'string', length: 255, notNull: true },
     description: { type: 'text' },
-    price: { type: 'int', notNull: true },
+    level: { type: 'int', notNull: true, defaultValue: 1 },
+    category: { type: 'string', length: 255, notNull: true },
     status: { type: 'boolean', notNull: true, defaultValue: true },
-    service_package_id: { type: 'int', defaultValue: null },
-    branch_id: { type: 'int', notNull: true },
-    total_sessions: { type: 'int', notNull: true },
+    employee_id: { type: 'int' },
     user_id: { type: 'int' },
     created_at: { type: 'timestamp', defaultValue: 'CURRENT_TIMESTAMP' },
     updated_at: { type: 'timestamp', defaultValue: 'CURRENT_TIMESTAMP' }
   }, function (err) {
     if (err) {
-      console.error('err create service table:', err);
+      console.error('err create users table:', err);
       return callback(err);
     }
-    console.log('service table created successfully');
+    console.log('users table created successfully');
     callback();
   });
 };
 
 exports.down = function (db, callback) {
-  db.dropTable('service', function (err) {
+  db.dropTable('users', function (err) {
     if (err) {
-      console.error('err drop service table:', err);
+      console.error('err drop users table:', err);
       return callback(err);
     }
-    console.log('service table dropped successfully');
+    console.log('users table dropped successfully');
     callback();
   });
 };

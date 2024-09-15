@@ -158,6 +158,13 @@ const errorMessages = {
     WARD_EXISTED: "Xã phường đã tồn tại",
     WARD_NAME_EXISTED: "Tên xã phường đã tồn tại",
     WARD_NAME_NOT_EXISTED: "Tên xã phường không tồn tại",
+
+    //hanle check in
+    HANDLE_CHECK_IN_FAILED: "Check in thất bại",
+    HANDLE_CHECK_IN_SUCCESS: "Check in thành công",
+    HANDLE_CHECK_OUT_FAILED: "Check out thất bại",
+    NO_TECHNICAN_AVAILABLE: "Không có kỹ thuật viên nào phù hợp",
+    SET_TECHNICAN_STATUS_FAILED: "Cập nhật trạng thái kỹ thuật viên thất bại",
 }
 
 export default errorMessages;

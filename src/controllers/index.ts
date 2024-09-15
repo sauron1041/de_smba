@@ -4,6 +4,13 @@ import UserController from "./user.controller";
 import { ServiceController } from "./service.controller";
 import { SessionController } from "./session.controller";
 import { SessionTrackingController } from "./sessionTracking.controller";
+import { SkillController } from "./skill.controller";
+import { ServiceSkillController } from "./serivceSkill.controller";
+import { AppointmentController } from "./appointment.controller";
+import { ServiceRequestController } from "./serviceRequest.controller";
+import { AvailableEmployeeController } from "./availableEmployee.controller";
+import { CustomerController } from "./customer.controller";
+import { ServicePackageController } from "./servicePackage.controller";
 
 export {
     IndexController,
@@ -11,5 +18,12 @@ export {
     UserController,
     ServiceController,
     SessionController,
-    SessionTrackingController
+    SessionTrackingController,
+    SkillController,
+    ServiceSkillController,
+    AppointmentController,
+    ServiceRequestController,
+    AvailableEmployeeController,
+    CustomerController,
+    
 }

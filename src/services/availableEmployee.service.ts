@@ -1,34 +1,21 @@
 import database from "@core/config/database";
-import { CreateDto } from "dtos/service/create.dto";
+import { CreateDto } from "dtos/availableEmployee/create.dto";
 import { HttpException } from "@core/exceptions";
 import { checkExist } from "@core/utils/checkExist";
 import { IPagiantion } from "@core/interfaces";
 import { RowDataPacket } from "mysql2";
 import errorMessages from "@core/config/constants";
 
-class ServiceService {
-    private tableName = 'service';
+export class AvailableEmployeeService {
+    private tableName = 'available_employee';
     private fieldId = 'id'
-    private fieldName = 'name'
 
     public create = async (model: CreateDto) => {
-        if (await checkExist(this.tableName, this.fieldName, model.name!.toString()))
-            return new HttpException(400, errorMessages.NAME_EXIST, this.fieldName);
         const created_at = new Date()
         const updated_at = new Date()
-        let query = `insert into ${this.tableName} (name, description, price, status, branch_id, total_sessions, user_id, created_at, updated_at, service_package_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        const result = await database.executeQuery(query, [
-            model.name || null,
-            model.description || null,
-            model.price || null,
-            model.status || null,
-            model.branch_id || null,
-            model.total_sessions || 10,
-            model.user_id || null,
-            created_at,
-            updated_at,
-            model.service_package_id || null
-        ]);
+        let query = `insert into ${this.tableName} (employee_id, is_available, created_at, updated_at) values (?, ?, ?, ?)`;
+        let values = [model.employee_id, model.is_available || 1, created_at, updated_at];
+        const result = await database.executeQuery(query, values);
         if ((result as any).affectedRows === 0)
             return new HttpException(400, errorMessages.CREATE_FAILED)
         return {
@@ -43,41 +30,15 @@ class ServiceService {
     public update = async (model: CreateDto, id: number) => {
         if (!await checkExist(this.tableName, this.fieldId, id.toString()))
             return new HttpException(400, errorMessages.EXISTED, this.fieldId);
-        if (await checkExist(this.tableName, this.fieldName, model.name!, id.toString()))
-            return new HttpException(400, errorMessages.NAME_EXIST, this.fieldName);
         let query = `update ${this.tableName} set `;
         let values = [];
-        if (model.name != undefined) {
-            query += `name = '${model.name}', `
-            values.push(model.name || null)
+        if (model.employee_id != undefined) {
+            query += `employee_id = '${model.employee_id}', `
+            values.push(model.employee_id)
         }
-        if (model.description != undefined) {
-            query += `description = '${model.description}', `
-            values.push(model.description || null)
-        }
-        if (model.price != undefined) {
-            query += `price = '${model.price}', `
-            values.push(model.price || null)
-        }
-        if (model.status != undefined) {
-            query += `status = '${model.status}', `
-            values.push(model.status || null)
-        }
-        if (model.branch_id != undefined) {
-            query += `branch_id = '${model.branch_id}', `
-            values.push(model.branch_id || null)
-        }
-        if (model.total_sessions != undefined) {
-            query += `total_sessions = '${model.total_sessions}', `
-            values.push(model.total_sessions || null)
-        }
-        if (model.user_id != undefined) {
-            query += `user_id = '${model.user_id}', `
-            values.push(model.user_id)
-        }
-        if (model.service_package_id != undefined) {
-            query += `service_package_id = '${model.service_package_id}', `
-            values.push(model.service_package_id || null)
+        if (model.is_available != undefined) {
+            query += `is_available = '${model.is_available}', `
+            values.push(model.is_available)
         }
         query += `updated_at = ? where id = ?`
         const updated_at = new Date()
@@ -110,40 +71,12 @@ class ServiceService {
         }
     }
     public searchs = async (key: string, page: number, limit: number, model: CreateDto) => {
-        let query = `select s.*, sp.name as service_package_name from ${this.tableName} s left join service_package sp on s.service_package_id = sp.id where 1=1`;
+        let query = `select * from ${this.tableName} where 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
 
         if (key && key.length != 0) {
-            query += ` (s.name like '%${key}%' or sp.name like '%${key}%' or s.description like '%${key}%' or s.price like '%${key}%')`
-            countQuery += ` (name like '%${key}%' or sp.name like '%${key}%' or s.description like '%${key}%' or s.price like '%${key}%')`
-        }
-        if (model.name && model.name.length != 0) {
-            query += ` and s.name like '%${model.name}%'`
-            countQuery += ` and s.name like '%${model.name}%'`
-        }
-        if (model.price) {
-            query += ` and s.price = ${model.price}`
-            countQuery += ` and s.price = ${model.price}`
-        }
-        if (model.status) {
-            query += ` and s.status = ${model.status}`
-            countQuery += ` and s.status = ${model.status}`
-        }
-        if (model.branch_id) {
-            query += ` and s.branch_id = ${model.branch_id}`
-            countQuery += ` and s.branch_id = ${model.branch_id}`
-        }
-        if (model.total_sessions) {
-            query += ` and s.total_sessions = ${model.total_sessions}`
-            countQuery += ` and s.total_sessions = ${model.total_sessions}`
-        }
-        if (model.user_id) {
-            query += ` and s.user_id = ${model.user_id}`
-            countQuery += ` and s.user_id = ${model.user_id}`
-        }
-        if (model.service_package_id) {
-            query += ` and s.service_package_id = ${model.service_package_id}`
-            countQuery += ` and s.service_package_id = ${model.service_package_id}`
+            query += ` and name like '%${key}%'`
+            countQuery += ` and name like '%${key}%'`
         }
         query += ` order by id desc`
         if (limit && !page && limit > 0) {
@@ -222,6 +155,36 @@ class ServiceService {
             return new HttpException(500, errorMessages.UPDATE_FAILED);
         }
     }
+    public findEmployeeByStatus = async (id: number, status: number) => {
+        const result = await database.executeQuery(`select * from ${this.tableName} where employee_id = ? and is_available = ?`, [id, status]);
+        if ((result as RowDataPacket[]).length === 0)
+            return new HttpException(404, errorMessages.NOT_FOUND)
+        return {
+            data: result
+        }
+    }
+    public updateStatusByEmployeeId = async (id: number, status: number) => {
+        try {
+            let result = null;
+            const update_at = new Date()
+            result = await database.executeQuery(`update ${this.tableName} set is_available = ?, updated_at = ? where employee_id = ?`, [status, update_at, id]);
+            return {
+                data: {
+                    status: status,
+                    updated_at: update_at
+                }
+            }
+        }
+        catch (error) {
+            return new HttpException(500, errorMessages.UPDATE_FAILED);
+        }
+    }
+    public findEmployeeWithSkillsByEmployeeId = async (id: number) => {
+        const result = await database.executeQuery(`select a.*, b.skill_id from ${this.tableName} a left join employee_skill b on a.employee_id = b.employee_id where a.employee_id = ? `, [id]);
+        if ((result as RowDataPacket[]).length === 0)
+            return new HttpException(404, errorMessages.NOT_FOUND)
+        return {
+            data: result
+        }
+    }
 }
-
-export default ServiceService;

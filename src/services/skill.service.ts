@@ -1,13 +1,13 @@
 import database from "@core/config/database";
-import { CreateDto } from "dtos/service/create.dto";
 import { HttpException } from "@core/exceptions";
 import { checkExist } from "@core/utils/checkExist";
 import { IPagiantion } from "@core/interfaces";
 import { RowDataPacket } from "mysql2";
 import errorMessages from "@core/config/constants";
+import { CreateDto } from "dtos/skill/create.dto";
 
-class ServiceService {
-    private tableName = 'service';
+export class SkillService {
+    private tableName = 'skill';
     private fieldId = 'id'
     private fieldName = 'name'
 
@@ -16,18 +16,17 @@ class ServiceService {
             return new HttpException(400, errorMessages.NAME_EXIST, this.fieldName);
         const created_at = new Date()
         const updated_at = new Date()
-        let query = `insert into ${this.tableName} (name, description, price, status, branch_id, total_sessions, user_id, created_at, updated_at, service_package_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        let query = `insert into ${this.tableName} (name, description, level, category, status, employee_id, user_id, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         const result = await database.executeQuery(query, [
-            model.name || null,
+            model.name,
             model.description || null,
-            model.price || null,
-            model.status || null,
-            model.branch_id || null,
-            model.total_sessions || 10,
-            model.user_id || null,
+            model.level || 1,
+            model.category || null,
+            model.status || 1,
+            model.employee_id || null,
+            model.user_id,
             created_at,
-            updated_at,
-            model.service_package_id || null
+            updated_at
         ]);
         if ((result as any).affectedRows === 0)
             return new HttpException(400, errorMessages.CREATE_FAILED)
@@ -51,33 +50,29 @@ class ServiceService {
             query += `name = '${model.name}', `
             values.push(model.name || null)
         }
-        if (model.description != undefined) {
-            query += `description = '${model.description}', `
-            values.push(model.description || null)
-        }
-        if (model.price != undefined) {
-            query += `price = '${model.price}', `
-            values.push(model.price || null)
-        }
         if (model.status != undefined) {
             query += `status = '${model.status}', `
             values.push(model.status || null)
-        }
-        if (model.branch_id != undefined) {
-            query += `branch_id = '${model.branch_id}', `
-            values.push(model.branch_id || null)
-        }
-        if (model.total_sessions != undefined) {
-            query += `total_sessions = '${model.total_sessions}', `
-            values.push(model.total_sessions || null)
         }
         if (model.user_id != undefined) {
             query += `user_id = '${model.user_id}', `
             values.push(model.user_id)
         }
-        if (model.service_package_id != undefined) {
-            query += `service_package_id = '${model.service_package_id}', `
-            values.push(model.service_package_id || null)
+        if(model.description != undefined){
+            query += `description = '${model.description}', `
+            values.push(model.description || null)
+        }
+        if(model.level != undefined){
+            query += `level = '${model.level}', `
+            values.push(model.level || null)
+        }
+        if(model.category != undefined){
+            query += `category = '${model.category}', `
+            values.push(model.category || null)
+        }
+        if(model.employee_id != undefined){
+            query += `employee_id = '${model.employee_id}', `
+            values.push(model.employee_id || null)
         }
         query += `updated_at = ? where id = ?`
         const updated_at = new Date()
@@ -110,40 +105,20 @@ class ServiceService {
         }
     }
     public searchs = async (key: string, page: number, limit: number, model: CreateDto) => {
-        let query = `select s.*, sp.name as service_package_name from ${this.tableName} s left join service_package sp on s.service_package_id = sp.id where 1=1`;
+        let query = `select * from ${this.tableName} where 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
 
         if (key && key.length != 0) {
-            query += ` (s.name like '%${key}%' or sp.name like '%${key}%' or s.description like '%${key}%' or s.price like '%${key}%')`
-            countQuery += ` (name like '%${key}%' or sp.name like '%${key}%' or s.description like '%${key}%' or s.price like '%${key}%')`
+            query += ` and name like '%${key}%'`
+            countQuery += ` and name like '%${key}%'`
         }
         if (model.name && model.name.length != 0) {
-            query += ` and s.name like '%${model.name}%'`
-            countQuery += ` and s.name like '%${model.name}%'`
-        }
-        if (model.price) {
-            query += ` and s.price = ${model.price}`
-            countQuery += ` and s.price = ${model.price}`
+            query += ` and name like '%${model.name}%'`
+            countQuery += ` and name like '%${model.name}%'`
         }
         if (model.status) {
-            query += ` and s.status = ${model.status}`
-            countQuery += ` and s.status = ${model.status}`
-        }
-        if (model.branch_id) {
-            query += ` and s.branch_id = ${model.branch_id}`
-            countQuery += ` and s.branch_id = ${model.branch_id}`
-        }
-        if (model.total_sessions) {
-            query += ` and s.total_sessions = ${model.total_sessions}`
-            countQuery += ` and s.total_sessions = ${model.total_sessions}`
-        }
-        if (model.user_id) {
-            query += ` and s.user_id = ${model.user_id}`
-            countQuery += ` and s.user_id = ${model.user_id}`
-        }
-        if (model.service_package_id) {
-            query += ` and s.service_package_id = ${model.service_package_id}`
-            countQuery += ` and s.service_package_id = ${model.service_package_id}`
+            query += ` and status = ${model.status}`
+            countQuery += ` and status = ${model.status}`
         }
         query += ` order by id desc`
         if (limit && !page && limit > 0) {
@@ -223,5 +198,3 @@ class ServiceService {
         }
     }
 }
-
-export default ServiceService;
