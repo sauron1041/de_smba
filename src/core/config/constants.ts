@@ -165,6 +165,52 @@ const errorMessages = {
     HANDLE_CHECK_OUT_FAILED: "Check out thất bại",
     NO_TECHNICAN_AVAILABLE: "Không có kỹ thuật viên nào phù hợp",
     SET_TECHNICAN_STATUS_FAILED: "Cập nhật trạng thái kỹ thuật viên thất bại",
+
+
+    CHECK_IN_SUCCESS: "Check in thành công",
+    CHECK_OUT_SUCCESS: "Check out thành công",
+    CHECK_IN_FAILED: "Check in thất bại",
+    CHECK_OUT_FAILED: "Check out thất bại",
+    CHECK_IN_NOT_EXISTED: "Check in không tồn tại",
+    CHECK_OUT_NOT_EXISTED: "Check out không tồn tại",
+
+    //service request
+    SERVICE_REQUEST_EXISTED: "Yêu cầu dịch vụ đã tồn tại",
+    SERVICE_REQUEST_NOT_EXISTED: "Yêu cầu dịch vụ không tồn tại",
+    SERVICE_REQUEST_NAME_EXISTED: "Tên yêu cầu dịch vụ đã tồn tại",
+    SERVICE_REQUEST_NAME_NOT_EXISTED: "Tên yêu cầu dịch vụ không tồn tại",
+    SERVICE_REQUEST_STATUS_NOT_EXISTED: "Trạng thái yêu cầu dịch vụ không tồn tại",
+    SERVICE_REQUEST_STATUS_EXISTED: "Trạng thái yêu cầu dịch vụ đã tồn tại",
+    CREATE_SERVICE_REQUEST_FAILED: "Tạo yêu cầu dịch vụ thất bại",
+    UPDATE_SERVICE_REQUEST_FAILED: "Cập nhật yêu cầu dịch vụ thất bại",
+    DELETE_SERVICE_REQUEST_FAILED: "Xóa yêu cầu dịch vụ thất bại",
+    SERVICE_REQUEST_NOT_ALLOW: "Không thể thay đổi trạng thái yêu cầu dịch vụ",
+    SERVICE_REQUEST_STATUS_INVALID: "Trạng thái yêu cầu dịch vụ không hợp lệ",
+    CREATE_SERVICE_REQUEST_SUCCESS: "Tạo yêu cầu dịch vụ thành công",
+    UPDATE_SERVICE_REQUEST_SUCCESS: "Cập nhật yêu cầu dịch vụ thành công",
+    DELETE_SERVICE_REQUEST_SUCCESS: "Xóa yêu cầu dịch vụ thành công",
+
+    //reception employee
+    ACCEPT_CHECK_IN_FAILED: "Chấp nhận check in thất bại",
+    ACCEPT_CHECK_IN_SUCCESS: "Chấp nhận check in thành công",
+    CANCEL_CHECK_IN_FAILED: "Hủy check in thất bại",
+    CANCEL_CHECK_IN_SUCCESS: "Hủy check in thành công",
+
+    //appointment
+    CREATE_APPOINTMENT_FAILED: "Tạo lịch hẹn thất bại",
+    CREATE_APPOINTMENT_SUCCESS: "Tạo lịch hẹn thành công",
+    UPDATE_APPOINTMENT_FAILED: "Cập nhật lịch hẹn thất bại",
+    UPDATE_APPOINTMENT_SUCCESS: "Cập nhật lịch hẹn thành công",
+    DELETE_APPOINTMENT_FAILED: "Xóa lịch hẹn thất bại",
+    DELETE_APPOINTMENT_SUCCESS: "Xóa lịch hẹn thành công",
+    APPOINTMENT_NOT_EXISTED: "Lịch hẹn không tồn tại",
+    APPOINTMENT_EXISTED: "Lịch hẹn đã tồn tại",
+    APPOINTMENT_STATUS_NOT_EXISTED: "Trạng thái lịch hẹn không tồn tại",
+    APPOINTMENT_STATUS_EXISTED: "Trạng thái lịch hẹn đã tồn tại",
+    APPOINTMENT_STATUS_INVALID: "Trạng thái lịch hẹn không hợp lệ",
+    APPOINTMENT_NOT_ALLOW: "Không thể thay đổi trạng thái lịch hẹn",
+    APPOINTMENT_STATUS_NEW: "Lịch hẹn mới",
+    APPOINTMENT_STATUS_PROCESSING: "Đang xử lý",
 }
 
 export default errorMessages;

@@ -5,16 +5,20 @@ import { checkExist } from "@core/utils/checkExist";
 import { IPagiantion } from "@core/interfaces";
 import { RowDataPacket } from "mysql2";
 import errorMessages from "@core/config/constants";
+// import { SkillService } from "./skill.service";
+import { EmployeeSkillService } from "./employeeSkill.service";
 
 export class AvailableEmployeeService {
     private tableName = 'available_employee';
     private fieldId = 'id'
+    // private skillService = new SkillService();
+    private employeeSkillService = new EmployeeSkillService();
 
     public create = async (model: CreateDto) => {
         const created_at = new Date()
         const updated_at = new Date()
-        let query = `insert into ${this.tableName} (employee_id, is_available, created_at, updated_at) values (?, ?, ?, ?)`;
-        let values = [model.employee_id, model.is_available || 1, created_at, updated_at];
+        let query = `insert into ${this.tableName} (employee_id, is_available, created_at, updated_at, branch_id, position_id, user_id) values (?, ?, ?, ?, ?, ?, ?)`;
+        let values = [model.employee_id, model.is_available || 1, created_at, updated_at, model.branch_id || 1, model.position_id || 3, model.user_id];
         const result = await database.executeQuery(query, values);
         if ((result as any).affectedRows === 0)
             return new HttpException(400, errorMessages.CREATE_FAILED)
@@ -39,6 +43,18 @@ export class AvailableEmployeeService {
         if (model.is_available != undefined) {
             query += `is_available = '${model.is_available}', `
             values.push(model.is_available)
+        }
+        if (model.branch_id != undefined) {
+            query += `branch_id = '${model.branch_id}', `
+            values.push(model.branch_id)
+        }
+        if (model.position_id != undefined) {
+            query += `position_id = '${model.position_id}', `
+            values.push(model.position_id)
+        }
+        if (model.user_id != undefined) {
+            query += `user_id = '${model.user_id}', `
+            values.push(model.user_id)
         }
         query += `updated_at = ? where id = ?`
         const updated_at = new Date()
@@ -179,10 +195,64 @@ export class AvailableEmployeeService {
             return new HttpException(500, errorMessages.UPDATE_FAILED);
         }
     }
-    public findEmployeeWithSkillsByEmployeeId = async (id: number) => {
-        const result = await database.executeQuery(`select a.*, b.skill_id from ${this.tableName} a left join employee_skill b on a.employee_id = b.employee_id where a.employee_id = ? `, [id]);
+    public findAllEmployeeWithCondition = async (model: CreateDto) => {
+        let query = `select * from ${this.tableName} where 1=1`;
+        let values = [];
+        if (model.branch_id != undefined) {
+            query += ` and branch_id = ?`
+            values.push(model.branch_id || 1) //set fake value
+        }
+        if (model.position_id != undefined) {
+            query += ` and position_id = ?`
+            values.push(model.position_id)
+        }
+        if (model.is_available != undefined) {
+            query += ` and is_available = ?`
+            values.push(model.is_available)
+        }
+        if (model.user_id != undefined) {
+            query += ` and user_id = ?`
+            values.push(model.user_id)
+        }
+        if (model.employee_id != undefined) {
+            query += ` and employee_id = ?`
+            values.push(model.employee_id)
+        }
+        query += ` order by id desc`
+        const result = await database.executeQuery(query, values);
         if ((result as RowDataPacket[]).length === 0)
             return new HttpException(404, errorMessages.NOT_FOUND)
+        for (let i = 0; i < (result as RowDataPacket[]).length; i++) {
+            const skill = await this.employeeSkillService.findAllSkillByEmployeeId((result as RowDataPacket[])[i].employee_id);
+            if (result instanceof HttpException) { }
+            (result as RowDataPacket[])[i].skills = (skill as RowDataPacket).data;
+        }
+        return {
+            data: result
+        }
+    }
+    public findAllEmployeeWithSkill = async (model: CreateDto) => {
+        let query = `select * from ${this} where 1=1`;
+        let values = [];
+        if (model.branch_id != undefined) {
+            query += ` and branch_id = ?`
+            values.push(model.branch_id)
+        }
+        if (model.user_id != undefined) {
+            query += ` and user_id = ?`
+            values.push(model.user_id)
+        }
+        query += ` order by id desc`
+        const result = await database.executeQuery(query, values);
+        console.log(result);
+
+        if ((result as RowDataPacket[]).length === 0)
+            return new HttpException(404, errorMessages.NOT_FOUND)
+        for (let i = 0; i < (result as RowDataPacket[]).length; i++) {
+            const skill = await this.employeeSkillService.findAllSkillByEmployeeId((result as RowDataPacket[])[i].id);
+            if (result instanceof HttpException) { }
+            (result as RowDataPacket[])[i].skills = (skill as RowDataPacket).data;
+        }
         return {
             data: result
         }

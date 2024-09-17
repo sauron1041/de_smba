@@ -16,6 +16,7 @@ class ServiceRoute implements IRoute {
 
     private initializeRoutes() {
         this.router.post(this.path + '/', AuthMiddleware.authorization, this.serivceRoute.create);
+        this.router.get(this.path + '/findAllSerivceWithSkill', AuthMiddleware.authorization, this.serivceRoute.findAllSerivceWithSkill);
         this.router.get(this.path + '/', AuthMiddleware.authorization, this.serivceRoute.searchs);
         this.router.delete(this.path + '/delete-list', AuthMiddleware.authorization, this.serivceRoute.deleteList);
         this.router.put(this.path + '/update-list-status', AuthMiddleware.authorization, this.serivceRoute.updateListstatus);

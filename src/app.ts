@@ -9,6 +9,7 @@ import Logger from "@core/utils/logger";
 import path from "path";
 const multer = require('multer');
 import database from "@core/config/database";
+import eventEmitterInstance from "@core/pubSub/pubSub";
 
 class App {
     public app: express.Application
@@ -22,6 +23,7 @@ class App {
         this.initialMiddlewares()
         this.initialRoutes(routes)
         this.initialErrorMidlleware()
+        this.eventEmitter();
     }
     private async initialRoutes(routes: IRoute[]) {
         routes.forEach(route => {
@@ -56,6 +58,9 @@ class App {
     }
     private connectMySql() {
         database.connectDB();
+    }
+    private eventEmitter() {
+        eventEmitterInstance.emit('appStarted');
     }
 }
 

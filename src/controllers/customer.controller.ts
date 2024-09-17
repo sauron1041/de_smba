@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { CreateDto } from "dtos/customer/create.dto";
 import message from "@core/config/constants";
 import { CustomerService } from "services";
-
+import { CreateDto as Appoinment } from "dtos/appointment/create.dto";
 export class CustomerController {
     public customerController = new CustomerService();
 
@@ -69,6 +69,18 @@ export class CustomerController {
             if (result instanceof Error)
                 return sendResponse(res, result.status, result.message);
             return sendResponse(res, 200, message.UPDATE_SUCCESS, result);
+        } catch (error) {
+            next(error);
+        }
+    }
+    public createAppointment = async (req: Request, res: Response, next: NextFunction) => {
+        const model: Appoinment = req.body;
+        model.user_id = req.id;
+        try {
+            const result = await this.customerController.createAppointment(model);
+            if (result instanceof Error)
+                return sendResponse(res, result.status, result.message);
+            return sendResponse(res, 200, message.CREATE_SUCCESS, result);
         } catch (error) {
             next(error);
         }

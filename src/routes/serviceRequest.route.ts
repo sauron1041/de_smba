@@ -4,7 +4,7 @@ import { ServiceRequestController } from "controllers/serviceRequest.controller"
 import { AuthMiddleware, errorMiddleware } from "@core/middleware";
 
 export class ServiceRequestRoute implements IRoute {
-    public path = '/services';
+    public path = '/service-requests';
     public router = Router();
 
     public serivceRoute = new ServiceRequestController();

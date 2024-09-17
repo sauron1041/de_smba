@@ -14,8 +14,8 @@ export class ServiceRequestService {
         const created_at = new Date()
         const updated_at = new Date()
         let check_in_time = new Date()
-        let query = `insert into ${this.tableName} (customer_id, employee_id, service_id, status, check_in_time, serving_at, completed_at, user_id, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        let values = [model.customer_id, model.employee_id, model.service_id, 1, check_in_time, null, null, model.user_id, created_at, updated_at];
+        let query = `insert into ${this.tableName} (customer_id, employee_id, service_id, status, check_in_time, serving_at, completed_at, user_id, updated_at, branch_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        let values = [model.customer_id, model.employee_id || null, model.service_id, 1, check_in_time, null, null, model.user_id, updated_at, model.branch_id || 1];
         const result = await database.executeQuery(query, values);
         if ((result as any).affectedRows === 0)
             return new HttpException(400, errorMessages.CREATE_FAILED)
@@ -29,13 +29,17 @@ export class ServiceRequestService {
         }
     }
     public update = async (model: CreateDto, id: number) => {
+        console.log("model", model);
+        console.log("id", id);
+        
+        
         if (!await checkExist(this.tableName, this.fieldId, id.toString()))
             return new HttpException(400, errorMessages.EXISTED, this.fieldId);
         let query = `update ${this.tableName} set `;
         let values = [];
         if (model.status != undefined) {
-            query += `status = '${model.status}', `
-            values.push(model.status || null)
+            query += `status = ${model.status}, `
+            values.push(model.status)
         }
         if (model.user_id != undefined) {
             query += `user_id = '${model.user_id}', `
@@ -53,11 +57,28 @@ export class ServiceRequestService {
             query += `completed_at = '${model.completed_at}', `
             values.push(model.completed_at)
         }
+        if (model.employee_id != undefined) {
+            query += `employee_id = '${model.employee_id}', `
+            values.push(model.employee_id)
+        }
+        if (model.service_id != undefined) {
+            query += `service_id = '${model.service_id}', `
+            values.push(model.service_id)
+        }
+        if (model.branch_id != undefined) {
+            query += `branch_id = '${model.branch_id}', `
+            values.push(model.branch_id)
+        }
         query += `updated_at = ? where id = ?`
-        const updated_at = new Date()
+        const updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
         values.push(updated_at)
         values.push(id)
+        console.log("query", query);
+        console.log("values", values);
+        
         const result = await database.executeQuery(query, values);
+        console.log("result", result);
+        
         if ((result as any).affectedRows === 0)
             return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
@@ -211,6 +232,52 @@ export class ServiceRequestService {
     public findServiceByStatus = async (status: number) => {
         const query = `select * from ${this.tableName} where status = ? order by check_in_time asc`;
         const result = await database.executeQuery(query, [status]);
+        if (Array.isArray(result) && result.length === 0)
+            return new HttpException(404, errorMessages.NOT_FOUND)
+        return {
+            data: result
+        }
+    }
+    public findQueueByBranchAndStatus = async (branch_id: number, status: number) => {
+        const query = `select * from ${this.tableName} where branch_id = ? and status = ? order by check_in_time desc`;
+        const result = await database.executeQuery(query, [branch_id, status]);
+        if (Array.isArray(result) && result.length === 0)
+            return new HttpException(404, errorMessages.NOT_FOUND)
+        return {
+            data: result
+        }
+    }
+    public findAllQueueByConditions = async (model: CreateDto) => {
+        let query = `select * from ${this.tableName} where 1=1`;
+        if (model.status) {
+            query += ` and status = ${model.status}`
+        }
+        if (model.branch_id) {
+            query += ` and branch_id = ${model.branch_id}`
+        }
+        if (model.employee_id) {
+            query += ` and employee_id = ${model.employee_id}`
+        }
+        if (model.service_id) {
+            query += ` and service_id = ${model.service_id}`
+        }
+        if (model.check_in_time) {
+            query += ` and check_in_time = ${model.check_in_time}`
+        }
+        if (model.serving_at) {
+            query += ` and serving_at = ${model.serving_at}`
+        }
+        if (model.completed_at) {
+            query += ` and completed_at = ${model.completed_at}`
+        }
+        if (model.user_id) {
+            query += ` and user_id = ${model.user_id}`
+        }
+        if(model.customer_id){
+            query += ` and customer_id = ${model.customer_id}`
+        }
+        query += ` order by check_in_time asc`
+        const result = await database.executeQuery(query);
         if (Array.isArray(result) && result.length === 0)
             return new HttpException(404, errorMessages.NOT_FOUND)
         return {

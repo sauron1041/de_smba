@@ -3,6 +3,9 @@ exports.up = function (db, callback) {
     id: { type: 'int', notNull: true, autoIncrement: true, primaryKey: true },
     employee_id: { type: 'int' },
     is_available: { type: 'boolean', notNull: true, defaultValue: true },
+    branch_id: { type: 'int' },
+    position_id: { type: 'int' },
+    user_id: { type: 'int' },
     created_at: { type: 'timestamp', defaultValue: 'CURRENT_TIMESTAMP' },
     updated_at: { type: 'timestamp', defaultValue: 'CURRENT_TIMESTAMP' }
   }, function (err) {

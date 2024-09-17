@@ -6,12 +6,15 @@ import { IPagiantion } from "@core/interfaces";
 import { RowDataPacket } from "mysql2";
 import errorMessages from "@core/config/constants";
 import { ServiceRequestService } from "./serviceRequest.service";
+import { AppointmentService } from "./appointment.service";
+import { CreateDto as Appoinment } from "dtos/appointment/create.dto";
 
 export class CustomerService {
     private tableName = 'users';
     private talbeServiceRequest = 'service_request'
     private fieldId = 'id'
     private serviceRequest = new ServiceRequestService();
+    private appointmentService = new AppointmentService();
     public findById = async (id: number) => {
         const result = await checkExist(this.tableName, this.fieldId, id.toString());
         if (result == false)
@@ -118,6 +121,23 @@ export class CustomerService {
         const result = await database.executeQuery(`select * from ${this.talbeServiceRequest} where customer_id = ? and status = ${status}`, [id]);
         if (Array.isArray(result) && result.length === 0)
             return new HttpException(404, errorMessages.NOT_FOUND)
+        return {
+            data: result
+        }
+    }
+    public createAppointment = async (model: Appoinment) => {
+        let modelAppointment: Appoinment = {
+            customer_id: model.customer_id,
+            employee_id: model.employee_id || null,
+            service_id: model.service_id,
+            status: 1, // status pending
+            date: model.date,
+            time: model.time,
+            branch_id: model.branch_id,
+            user_id: model.user_id
+        }
+        const result = await this.appointmentService.create(modelAppointment)
+        if (result instanceof HttpException) { return new HttpException(400, errorMessages.CREATE_APPOINTMENT_FAILED) }
         return {
             data: result
         }

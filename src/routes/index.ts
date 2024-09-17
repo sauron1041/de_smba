@@ -11,6 +11,8 @@ import { ServiceRequestRoute } from "./serviceRequest.route";
 import { AvailableEmployeeRoute } from "./availableEmployee.route";
 import { CustomerRoute } from "./customer.route";
 import { ServicePackageRoute } from "./servicePackage.route";
+import { EmployeeRoute } from "./employee.route";
+import { EmployeeSkillRoute } from "./employeeSkill.route";
 
 export {
     IndexRoute,
@@ -25,5 +27,7 @@ export {
     ServiceRequestRoute,
     AvailableEmployeeRoute,
     CustomerRoute,
-    ServicePackageRoute
+    ServicePackageRoute,
+    EmployeeRoute,
+    EmployeeSkillRoute,
 }

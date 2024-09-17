@@ -14,9 +14,12 @@ import { AppointmentRoute } from "routes";
 import { AvailableEmployeeRoute } from "routes";
 import { ServiceRequestRoute } from "routes";
 import { ServicePackageRoute } from "routes";
+import { CustomerRoute } from "routes";
+import { ReceptionEmployeeRoute } from "routes/receptionEmployee.route";
+import { EmployeeRoute } from "routes/employee.route";
+import { EmployeeSkillRoute } from "routes";
 
 validateEnv();
-
 const routes = [
     new IndexRoute(),
     new UserRoute(),
@@ -30,6 +33,10 @@ const routes = [
     new AppointmentRoute(),
     new AvailableEmployeeRoute(),
     new ServiceRequestRoute(),
+    new CustomerRoute(),
+    new ReceptionEmployeeRoute(),
+    new EmployeeRoute(),
+    new EmployeeSkillRoute(),
 ];
 
 const app = new App(routes);

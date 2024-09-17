@@ -7,7 +7,7 @@ export class CreateDto {
     time?: Date;
     status?: number;
     customer_id?: number;
-    employee_id?: number;
+    employee_id?: number | null;
     service_id?: number;
     note?: string;
     reminder_sent?: number;

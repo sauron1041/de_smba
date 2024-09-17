@@ -58,19 +58,19 @@ export class SkillService {
             query += `user_id = '${model.user_id}', `
             values.push(model.user_id)
         }
-        if(model.description != undefined){
+        if (model.description != undefined) {
             query += `description = '${model.description}', `
             values.push(model.description || null)
         }
-        if(model.level != undefined){
+        if (model.level != undefined) {
             query += `level = '${model.level}', `
             values.push(model.level || null)
         }
-        if(model.category != undefined){
+        if (model.category != undefined) {
             query += `category = '${model.category}', `
             values.push(model.category || null)
         }
-        if(model.employee_id != undefined){
+        if (model.employee_id != undefined) {
             query += `employee_id = '${model.employee_id}', `
             values.push(model.employee_id || null)
         }
@@ -195,6 +195,15 @@ export class SkillService {
         }
         catch (error) {
             return new HttpException(500, errorMessages.UPDATE_FAILED);
+        }
+    }
+    public findAllSkillByEmployeeId = async (employee_id: number) => {
+        const result = await database.executeQuery(`select * from ${this.tableName} where employee_id = ?`, [employee_id]);
+        console.log(result);
+        if (Array.isArray(result) && result.length === 0)
+            return new HttpException(404, errorMessages.NOT_FOUND)
+        return {
+            data: result
         }
     }
 }

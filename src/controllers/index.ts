@@ -11,6 +11,8 @@ import { ServiceRequestController } from "./serviceRequest.controller";
 import { AvailableEmployeeController } from "./availableEmployee.controller";
 import { CustomerController } from "./customer.controller";
 import { ServicePackageController } from "./servicePackage.controller";
+import { EmployeeController } from "./employee.controller";
+import { EmployeeSkillController } from "./employeeSkill.controller";
 
 export {
     IndexController,
@@ -25,5 +27,6 @@ export {
     ServiceRequestController,
     AvailableEmployeeController,
     CustomerController,
-    
+    EmployeeController,
+    EmployeeSkillController,
 }

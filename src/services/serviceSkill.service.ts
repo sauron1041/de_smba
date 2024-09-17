@@ -159,4 +159,12 @@ export class SerivceSkillService {
             return new HttpException(500, errorMessages.UPDATE_FAILED);
         }
     }
+    public findAllSkillByServiceId = async (service_id: number) => {
+        const result = await database.executeQuery(`select * from ${this.tableName} where service_id = ?`, [service_id]);
+        if (Array.isArray(result) && result.length === 0)
+            return new HttpException(404, errorMessages.NOT_FOUND)
+        return {
+            data: result
+        }
+    }
 }

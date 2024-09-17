@@ -10,6 +10,9 @@ import { ServiceRequestService } from "./serviceRequest.service";
 import { AvailableEmployeeService } from "./availableEmployee.service";
 import { CustomerService } from "./customer.service";
 import { ServicePackageService } from "./servicePackage.service";
+import { ReceptionEmployeeService } from "./receptionEmployee";
+import { TechnicalEmployeeService } from "./technicalEmployee";
+import { EmployeeSkillService } from "./employeeSkill.service";
 
 export {
     AuthServices,
@@ -23,5 +26,8 @@ export {
     ServiceRequestService,
     AvailableEmployeeService,
     CustomerService,
-    ServicePackageService
+    ServicePackageService,
+    ReceptionEmployeeService,
+    TechnicalEmployeeService,
+    EmployeeSkillService
 }

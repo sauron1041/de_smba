@@ -9,6 +9,10 @@ import { CustomerService } from "./customer.service";
 import { AvailableEmployeeService } from "./availableEmployee.service";
 import { SerivceSkillService } from "./serviceSkill.service";
 import { ServiceRequestService } from "./serviceRequest.service";
+import { CreateDto as ServiceRequest } from "dtos/serviceRequest/create.dto";
+import { EmployeeService } from "./employeeService.service";
+import { CreateDto as AvailableeEmployee } from "dtos/availableEmployee/create.dto";
+import eventEmitterInstance from "@core/pubSub/pubSub";
 
 export class QueueService {
     private tableName = 'service_request';
@@ -18,6 +22,11 @@ export class QueueService {
     private availableEmployeeService = new AvailableEmployeeService();
     private serviceSkillsService = new SerivceSkillService();
     private serviceRequestService = new ServiceRequestService();
+    private serviceService = new ServiceRequestService();
+    private employeeService = new EmployeeService();
+    public constructor() {
+        this.listenToEvent();
+    }
 
     public addCustomerToQueue = async (model: CreateDto) => {
         const created_at = new Date()
@@ -251,7 +260,7 @@ export class QueueService {
     }
     public hanleCompletedCustomer = async (service_id: number) => {
         const update_at = new Date()
-        const result = await this.serviceRequestService.update({ status: 4, completed_at: update_at }, service_id);
+        const result = await this.serviceRequestService.update({ status: 3, completed_at: update_at }, service_id);
         if (result instanceof HttpException) return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: result
@@ -267,7 +276,7 @@ export class QueueService {
     }
     public handleServingCustomer = async (service_id: number) => {
         const update_at = new Date()
-        const result = await this.serviceRequestService.update({ status: 3, serving_at: update_at }, service_id);
+        const result = await this.serviceRequestService.update({ status: 2, serving_at: update_at }, service_id);
         if (result instanceof HttpException) return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: result
@@ -299,5 +308,62 @@ export class QueueService {
 
             }
         }
+    }
+
+    // 2024-09-15
+
+    public findFirstQueuePending = async (model: ServiceRequest) => {
+        const result = await this.serviceRequestService.findAllQueueByConditions({
+            branch_id: model.branch_id || 1, // vi du 1
+            status: 1 // pending
+        });
+        if (result instanceof HttpException) return new HttpException(400, errorMessages.NOT_FOUND);
+        return {
+            data: (result as RowDataPacket).data[0]
+        }
+    }
+    private listenToEvent = async () => {
+        eventEmitterInstance.on('acceptAppointment', async (appointment_id: number, checkInTime: Date, status: number, serviceRequest: ServiceRequest) => {
+            try {
+                const listCustomer = await this.serviceRequestService.findAllQueueByConditions({
+                    branch_id: serviceRequest.branch_id,
+                    status: 1 // pending
+                });
+                console.log("findAll", listCustomer);
+
+                for (let i = 0; i < (listCustomer as RowDataPacket).data.length; i++) {
+                    const customer = (listCustomer as RowDataPacket).data[i];
+                    const employee = await this.employeeService.findEmployeeWithSkillOfService((serviceRequest as RowDataPacket).id);
+                    if (employee instanceof HttpException) {
+                        console.log("employee not found");
+                        return new HttpException(400, "employee not found");
+                    }
+                    console.log("employee", employee);
+
+                    let query = `update ${this.tableName} set status = ?, serving_at = ? where id = ?`
+                    const update_at = new Date()
+                    const values = [2, update_at, (serviceRequest as RowDataPacket).id];
+                    const resultUpdateServing = await database.executeQuery(query, values);
+                    if ((customer as any).affectedRows === 0)
+                        return new HttpException(400, errorMessages.UPDATE_FAILED);
+                    console.log("updateServiceRequest", resultUpdateServing);
+
+                    // set trang thai nhan vien ve busy
+                    let queryEmployee = `update available_employee set is_available = ? where employee_id = ?`
+                    let valuesEmployee = [2, (employee as RowDataPacket).data[0].id];
+                    const resultUpdateEmployee = await database.executeQuery(queryEmployee, valuesEmployee);
+                    if ((resultUpdateEmployee as any).affectedRows === 0)
+                        return new HttpException(400, errorMessages.UPDATE_FAILED);
+                    console.log("updateEmployee", resultUpdateEmployee);
+
+                    if((listCustomer as RowDataPacket).data.length > 0 ){
+                        eventEmitterInstance.emit('acceptAppointment', appointment_id, checkInTime, 2, (serviceRequest as RowDataPacket).data)
+                    }
+                }
+
+            } catch (error) {
+            }
+        })
+        
     }
 }

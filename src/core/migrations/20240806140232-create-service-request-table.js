@@ -4,6 +4,7 @@ exports.up = function (db, callback) {
     customer_id: { type: 'int', notNull: true },
     employee_id: { type: 'int', notNull: true },
     service_id: { type: 'int', notNull: true },
+    branch_id: { type: 'int', notNull: true },
     status: { type: 'int', notNull: true, defaultValue: 1 },
     check_in_time: { type: 'timestamp', defaultValue: 'CURRENT_TIMESTAMP' },
     serving_at: { type: 'timestamp' },

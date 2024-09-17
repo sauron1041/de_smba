@@ -5,11 +5,13 @@ import { checkExist } from "@core/utils/checkExist";
 import { IPagiantion } from "@core/interfaces";
 import { RowDataPacket } from "mysql2";
 import errorMessages from "@core/config/constants";
+import { SerivceSkillService } from "./serviceSkill.service";
 
 class ServiceService {
     private tableName = 'service';
     private fieldId = 'id'
     private fieldName = 'name'
+    private serviceSkillService = new SerivceSkillService();
 
     public create = async (model: CreateDto) => {
         if (await checkExist(this.tableName, this.fieldName, model.name!.toString()))
@@ -220,6 +222,47 @@ class ServiceService {
         }
         catch (error) {
             return new HttpException(500, errorMessages.UPDATE_FAILED);
+        }
+    }
+    public findAllSerivceWithSkill = async (model: CreateDto) => {
+        let query = `select * from ${this.tableName} where 1=1`;
+        let values = [];
+        if (model.branch_id != undefined) {
+            query += ` and branch_id = ?`
+            values.push(model.branch_id)
+        }
+        if (model.user_id != undefined) {
+            query += ` and user_id = ?`
+            values.push(model.user_id)
+        }
+        if (model.service_package_id != undefined) {
+            query += ` and service_package_id = ?`
+            values.push(model.service_package_id)
+        }
+        if (model.status != undefined) {
+            query += ` and status = ?`
+            values.push(model.status)
+        }
+        if (model.total_sessions != undefined) {
+            query += ` and total_sessions = ?`
+            values.push(model.total_sessions)
+        }
+        if (model.name != undefined) {
+            query += ` and name like '%${model.name}%'`
+        }
+        query += ` order by id desc`
+        const result = await database.executeQuery(query, values);
+        console.log(result);
+
+        if ((result as RowDataPacket[]).length === 0)
+            return new HttpException(404, errorMessages.NOT_FOUND)
+        for (let i = 0; i < (result as RowDataPacket[]).length; i++) {
+            const skill = await this.serviceSkillService.findAllSkillByServiceId((result as RowDataPacket[])[i].id);
+            if (result instanceof HttpException) { }
+            (result as RowDataPacket[])[i].skills = (skill as RowDataPacket).data;
+        }
+        return {
+            data: result
         }
     }
 }
