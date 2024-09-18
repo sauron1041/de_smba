@@ -38,33 +38,50 @@ export class EmployeeService {
         }
     }
 
+    // public findEmployeeWithSkillOfService = async (service_id: number) => {
+    //     const service = await this.serviceService.findAllSerivceWithSkill({ id: service_id });
+    //     let model: AvailableeEmployee = {};
+    //     const employeeSkill = await this.findAllEmployeeWithSkill(model);
+    //     if ((employeeSkill as RowDataPacket).data.length == 0) {
+    //         return new HttpException(400, errorMessages.NOT_FOUND);
+    //     }
+    //     const employees = (employeeSkill as RowDataPacket).data;
+    //     const services = (service as RowDataPacket).data;
+    //     let result = [];
+    //     // chua chinh xac
+    //     for (let i = 0; i < employees.length; i++) {
+    //         if (employees[i].skills && services[0].skills) {
+    //             for (let j = 0; j < employees[i].skills.length; j++) {
+    //                 for (let k = 0; k < services[0].skills.length; k++) {
+    //                     if (employees[i].skills[j].id == services[0].skills[k].id) {
+    //                             result.push(employees[i])
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return {
+    //         data: result
+    //     }
+    // }
+
     public findEmployeeWithSkillOfService = async (service_id: number) => {
         const service = await this.serviceService.findAllSerivceWithSkill({ id: service_id });
         let model: AvailableeEmployee = {};
-        const employeeSkill = await this.findAllEmployeeWithSkill(model);
+        const employeeSkill = await this.findAllEmployeeWithSkill(model); // thieu branch
         if ((employeeSkill as RowDataPacket).data.length == 0) {
             return new HttpException(400, errorMessages.NOT_FOUND);
         }
-        const employees = (employeeSkill as RowDataPacket).data;
-        const services = (service as RowDataPacket).data;
-        let result = [];
-        // chua chinh xac
-        for (let i = 0; i < employees.length; i++) {
-            if (employees[i].skills && services[0].skills) {
-                for (let j = 0; j < employees[i].skills.length; j++) {
-                    for (let k = 0; k < services[0].skills.length; k++) {
-                        if (employees[i].skills[j].id == services[0].skills[k].id) {
-                                result.push(employees[i])
-                        }
-                    }
-                }
-            }
-        }
+        // const SkillOfService = (service as RowDataPacket).data
+        // const Employee = (employeeSkill as RowDataPacket).data;
+
+        // let listIdSkillOfService: number[] = []
+        // const listSkillIdOfService = SkillOfService.map((item: any) => )
+
         return {
-            data: result
+            data: 0
         }
     }
-
 
     public findAllEmployeeWithSkill = async (model: AvailableeEmployee) => {
         const result = await this.availableEmployeeService.findAllEmployeeWithCondition(model)

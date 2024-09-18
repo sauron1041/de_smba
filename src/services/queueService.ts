@@ -20,9 +20,7 @@ export class QueueService {
 
     private customerService = new CustomerService();
     private availableEmployeeService = new AvailableEmployeeService();
-    private serviceSkillsService = new SerivceSkillService();
     private serviceRequestService = new ServiceRequestService();
-    private serviceService = new ServiceRequestService();
     private employeeService = new EmployeeService();
     public constructor() {
         this.listenToEvent();
@@ -323,6 +321,52 @@ export class QueueService {
         }
     }
     private listenToEvent = async () => {
+        eventEmitterInstance.on('updateStatusServiceRequestCompleted', async (branch_id) => {
+            try {
+                
+                // const serviceRequest = await this.findFirstQueuePending({ branch_id: 1 });
+                const listCustomer = await this.serviceRequestService.findAllQueueByConditions({
+                    // branch_id: serviceRequest.branch_id,
+                    branch_id: branch_id ?? 1, 
+                    status: 1 // pending
+                });
+
+                console.log("findAll", listCustomer);
+
+                for (let i = 0; i < (listCustomer as RowDataPacket).data.length; i++) {
+                    const customer = (listCustomer as RowDataPacket).data[i];
+                    const employee = await this.employeeService.findEmployeeWithSkillOfService((listCustomer as RowDataPacket).data[i].id);
+                    if (employee instanceof HttpException) {
+                        console.log("employee not found");
+                        return new HttpException(400, "employee not found");
+                    }
+                    console.log("employee2e2e",  (employee as RowDataPacket).data[0].employee_id);
+
+                    let query = `update ${this.tableName} set status = ?, serving_at = ?, employee_id = ? where id = ?`
+                    const update_at = new Date()
+                    const values = [2, update_at, (employee as RowDataPacket).data[0].employee_id, (listCustomer as RowDataPacket).data[i].id];
+                    const resultUpdateServing = await database.executeQuery(query, values);
+
+                    if ((customer as any).affectedRows === 0)
+                        return new HttpException(400, errorMessages.UPDATE_FAILED);
+                    console.log("updateServiceRequest", resultUpdateServing);
+
+                    // set trang thai nhan vien ve busy
+                    let queryEmployee = `update available_employee set is_available = ? where employee_id = ?`
+                    let valuesEmployee = [2, (employee as RowDataPacket).data[0].id];
+                    const resultUpdateEmployee = await database.executeQuery(queryEmployee, valuesEmployee);
+                    if ((resultUpdateEmployee as any).affectedRows === 0)
+                        return new HttpException(400, errorMessages.UPDATE_FAILED);
+                    console.log("updateEmployee", resultUpdateEmployee);
+
+                    // if ((listCustomer as RowDataPacket).data.length > 0) {
+                    //     eventEmitterInstance.emit('acceptAppointment', appointment_id, checkInTime, 2, (serviceRequest as RowDataPacket).data)
+                    // }
+                }
+
+            } catch (error) {
+            }
+        })
         eventEmitterInstance.on('acceptAppointment', async (appointment_id: number, checkInTime: Date, status: number, serviceRequest: ServiceRequest) => {
             try {
                 const listCustomer = await this.serviceRequestService.findAllQueueByConditions({
@@ -340,9 +384,9 @@ export class QueueService {
                     }
                     console.log("employee", employee);
 
-                    let query = `update ${this.tableName} set status = ?, serving_at = ? where id = ?`
+                    let query = `update ${this.tableName} set status = ?, serving_at = ?, employee_id = ? where id = ?`
                     const update_at = new Date()
-                    const values = [2, update_at, (serviceRequest as RowDataPacket).id];
+                    const values = [2, update_at, (employee as RowDataPacket).data[0].employee_id, (listCustomer as RowDataPacket).data[i].id];
                     const resultUpdateServing = await database.executeQuery(query, values);
                     if ((customer as any).affectedRows === 0)
                         return new HttpException(400, errorMessages.UPDATE_FAILED);
@@ -356,7 +400,7 @@ export class QueueService {
                         return new HttpException(400, errorMessages.UPDATE_FAILED);
                     console.log("updateEmployee", resultUpdateEmployee);
 
-                    if((listCustomer as RowDataPacket).data.length > 0 ){
+                    if ((listCustomer as RowDataPacket).data.length > 0) {
                         eventEmitterInstance.emit('acceptAppointment', appointment_id, checkInTime, 2, (serviceRequest as RowDataPacket).data)
                     }
                 }
@@ -364,6 +408,6 @@ export class QueueService {
             } catch (error) {
             }
         })
-        
+
     }
 }

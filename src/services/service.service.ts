@@ -44,44 +44,46 @@ class ServiceService {
     }
     public update = async (model: CreateDto, id: number) => {
         if (!await checkExist(this.tableName, this.fieldId, id.toString()))
-            return new HttpException(400, errorMessages.EXISTED, this.fieldId);
+            return new HttpException(400, errorMessages.NOT_EXISTED, this.fieldId);
         if (await checkExist(this.tableName, this.fieldName, model.name!, id.toString()))
             return new HttpException(400, errorMessages.NAME_EXIST, this.fieldName);
         let query = `update ${this.tableName} set `;
         let values = [];
         if (model.name != undefined) {
-            query += `name = '${model.name}', `
+            query += `name = ?, `
             values.push(model.name || null)
         }
         if (model.description != undefined) {
-            query += `description = '${model.description}', `
+            query += `description = ?, `
             values.push(model.description || null)
         }
         if (model.price != undefined) {
-            query += `price = '${model.price}', `
+            query += `price = ?, `
             values.push(model.price || null)
         }
         if (model.status != undefined) {
-            query += `status = '${model.status}', `
+            query += `status = ?, `
             values.push(model.status || null)
         }
         if (model.branch_id != undefined) {
-            query += `branch_id = '${model.branch_id}', `
+            query += `branch_id = ?, `
             values.push(model.branch_id || null)
         }
         if (model.total_sessions != undefined) {
-            query += `total_sessions = '${model.total_sessions}', `
+            query += `total_sessions = ?, `
             values.push(model.total_sessions || null)
         }
         if (model.user_id != undefined) {
-            query += `user_id = '${model.user_id}', `
+            query += `user_id = ?, `
             values.push(model.user_id)
         }
         if (model.service_package_id != undefined) {
-            query += `service_package_id = '${model.service_package_id}', `
+            query += `service_package_id = ?, `
             values.push(model.service_package_id || null)
         }
         query += `updated_at = ? where id = ?`
+        console.log(query);
+        console.log(values);
         const updated_at = new Date()
         values.push(updated_at)
         values.push(id)
@@ -90,6 +92,7 @@ class ServiceService {
             return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: {
+                ...model
             }
         }
     }
@@ -249,6 +252,10 @@ class ServiceService {
         }
         if (model.name != undefined) {
             query += ` and name like '%${model.name}%'`
+        }
+        if(model.id != undefined){
+            query += ` and id = ?`
+            values.push(model.id)
         }
         query += ` order by id desc`
         const result = await database.executeQuery(query, values);

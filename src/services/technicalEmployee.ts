@@ -9,6 +9,7 @@ import { CreateDto as ServiceRequest } from "../dtos/serviceRequest/create.dto";
 import { AvailableEmployeeService } from "./availableEmployee.service";
 import { CreateDto as AvailableeEmployee } from "dtos/availableEmployee/create.dto";
 import eventEmitterInstance from "@core/pubSub/pubSub";
+import { RowDataPacket } from "mysql2";
 
 export class TechnicalEmployeeService {
     private tableNameAppointment = 'appointment';
@@ -29,6 +30,22 @@ export class TechnicalEmployeeService {
         let query = `update service_request set status = ? , completed_at = ? where id = ?`;
         const values = [4, completed_at, service_request_id];
         const result = await database.executeQuery(query, values);
+
+        //set lai status cua nhan vien free => status = 1
+        let queryEmployeeStatus = `update available_employee set is_available = ? where employee_id = ?`;
+
+        const branch = await database.executeQuery("select * from available_employee where employee_id = " + model.employee_id);
+        if (branch instanceof HttpException) { }
+        const branch_id = (branch as RowDataPacket)[0].branch_id;
+        console.log(branch_id);
+
+
+        const valuesEmployeeStatus = [1, model.employee_id];
+        const resultEmployeeStatus = await database.executeQuery(queryEmployeeStatus, valuesEmployeeStatus);
+        console.log(resultEmployeeStatus);
+
+        eventEmitterInstance.emit('updateStatusServiceRequestCompleted', branch_id ? branch_id : null)
+
         if ((result as any).affectedRows === 0)
             return new HttpException(400, errorMessages.UPDATE_FAILED)
         return {
@@ -46,6 +63,7 @@ export class TechnicalEmployeeService {
         }
     }
     private listenToEvent = () => {
-        eventEmitterInstance.on('updateStatusServiceRequestCompleted', this.updateStatusServiceRequestCompleted)
+        eventEmitterInstance.on('acceptAppointment', () => {})
+        // eventEmitterInstance.on('updateStatusServiceRequestCompleted', this.updateStatusServiceRequestCompleted)
     }
 }
