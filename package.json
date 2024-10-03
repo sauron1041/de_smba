@@ -41,6 +41,7 @@
     "prod": "cross-env NODE_ENV=production node dist/server.js",
     "start": "node dist/server.js",
     "watch": "tsc -w"
+    
   },
   "_moduleAliases": {
     "@core": "dist/core",
