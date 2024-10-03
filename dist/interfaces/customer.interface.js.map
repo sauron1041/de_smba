@@ -1,0 +1,1 @@
+{"version":3,"file":"customer.interface.js","sourceRoot":"","sources":["../../src/interfaces/customer.interface.ts"],"names":[],"mappings":";;;AAQA,MAAa,QAAQ;IAKjB,YAAY,EAAU,EAAE,IAAY,EAAE,SAA8C,SAAS;QACzF,IAAI,CAAC,EAAE,GAAG,EAAE,CAAC;QACb,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;QACjB,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;IACzB,CAAC;CACJ;AAVD,4BAUC"}
