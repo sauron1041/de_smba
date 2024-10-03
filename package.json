@@ -39,7 +39,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "install": "npm install --include=optional sharp",
+    "install": "npm i --force && npm install --include=optional sharp",
     "build": "tsc",
     "server": "nodemon -r tsconfig-paths/register src/server.ts",
     "dev": "cross-env NODE_ENV=development nodemon -r tsconfig-paths/register src/server.ts",
