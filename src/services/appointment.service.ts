@@ -12,6 +12,7 @@ export class AppointmentService {
     private tableName = 'appointment';
     private fieldId = 'id'
 
+    
     private serviceRequestService = new ServiceRequestService()
 
     public create = async (model: CreateDto) => {
