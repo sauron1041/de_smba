@@ -62,8 +62,12 @@ export class ServiceSkillController {
         const status = req.query.status as any;
         const page = req.query.page as any;
         const limit = req.query.limit as any;
-        const model: CreateDto = {
+        const skill_id = req.query.skill_id as any;
+        const service_id = req.query.service_id as any;
 
+        const model: CreateDto = {  
+            skill_id: skill_id,
+            service_id: service_id
         }
         let pageInt = parseInt(page as any)
         let limitInt = parseInt(limit as any)

@@ -21,6 +21,8 @@ export class ServicePackageController {
         }
     }
     public update = async (req: Request, res: Response, next: NextFunction) => {
+        console.log("req.body", req.body);
+        
         const model: CreateDto = req.body;
         const id: number = req.params.id as any;
         try {
@@ -65,6 +67,7 @@ export class ServicePackageController {
         const model: CreateDto = {
             name: name,
             status: status,
+            user_id: req.id
         }
         let pageInt = parseInt(page as any)
         let limitInt = parseInt(limit as any)

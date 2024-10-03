@@ -30,6 +30,8 @@ export class TechnicalEmployeeService {
         let query = `update service_request set status = ? , completed_at = ? where id = ?`;
         const values = [4, completed_at, service_request_id];
         const result = await database.executeQuery(query, values);
+        console.log("result", result);
+        
 
         //set lai status cua nhan vien free => status = 1
         let queryEmployeeStatus = `update available_employee set is_available = ? where employee_id = ?`;
@@ -42,7 +44,7 @@ export class TechnicalEmployeeService {
 
         const valuesEmployeeStatus = [1, model.employee_id];
         const resultEmployeeStatus = await database.executeQuery(queryEmployeeStatus, valuesEmployeeStatus);
-        console.log(resultEmployeeStatus);
+        console.log("resultEmployeeStatus nahn vien ", resultEmployeeStatus);
 
         eventEmitterInstance.emit('updateStatusServiceRequestCompleted', branch_id ? branch_id : null)
 

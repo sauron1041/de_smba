@@ -22,6 +22,7 @@ class UserRoute implements IRoute {
         this.router.patch(this.path + '/:id', this.userController.updateProfile)
         this.router.delete(this.path + '/:id', AuthMiddleware.authorization, this.userController.delete)
         this.router.get(this.path + '/', AuthMiddleware.authorization, this.userController.searchs)
+        this.router.get(this.path + '/get-profile', AuthMiddleware.authorization, this.userController.getProfileById)
     }
 }
 

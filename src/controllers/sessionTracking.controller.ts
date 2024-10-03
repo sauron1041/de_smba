@@ -62,9 +62,20 @@ export class SessionTrackingController {
         const page = req.query.page as any;
         const limit = req.query.limit as any;
         const note = req.query.note as any;
+        const session_id = req.query.session_id as any;
+        const process = req.query.process as any;
+        const branch_id = req.query.branch_id as any;
+        const user_id = req.query.user_id as any;
+        const customer_id = req.query.customer_id as any;
+        
         const model: CreateDto = {
             note: note,
             status: status,
+            session_id: session_id,
+            process: process,
+            branch_id: branch_id,
+            user_id: user_id,
+            customer_id: customer_id
         }
         let pageInt = parseInt(page as any)
         let limitInt = parseInt(limit as any)

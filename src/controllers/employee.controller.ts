@@ -12,7 +12,7 @@ export class EmployeeController {
         try {
             const result = await this.employeeController.findEmployeeWithSkillOfService(service_id);
             if (result instanceof Error)
-                return sendResponse(res, result.status, result.message);
+                return sendResponse(res, (result as any).status, result.message);
             return sendResponse(res, 200, message.FIND_ALL_SUCCESS, result);
         } catch (error) {
             next(error);

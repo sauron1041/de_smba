@@ -62,9 +62,20 @@ export class SkillController {
         const status = req.query.status as any;
         const page = req.query.page as any;
         const limit = req.query.limit as any;
+        const category = req.query.category as any;
+        const level = req.query.level as any;
+        const employee_id = req.query.employee_id as any;
+        const user_id = req.query.user_id as any;
+        const description = req.query.description as any;
+
         const model: CreateDto = {
             name: name,
             status: status,
+            category: category,
+            level: level,
+            employee_id: employee_id,
+            user_id: user_id,
+            description: description,
         }
         let pageInt = parseInt(page as any)
         let limitInt = parseInt(limit as any)

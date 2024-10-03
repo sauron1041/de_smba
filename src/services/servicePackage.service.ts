@@ -33,6 +33,8 @@ export class ServicePackageService {
         }
     }
     public update = async (model: CreateDto, id: number) => {
+        console.log("model", model);
+        
         if (!await checkExist(this.tableName, this.fieldId, id.toString()))
             return new HttpException(400, errorMessages.EXISTED, this.fieldId);
         if (await checkExist(this.tableName, this.fieldName, model.name!, id.toString()))
@@ -40,15 +42,15 @@ export class ServicePackageService {
         let query = `update ${this.tableName} set `;
         let values = [];
         if (model.name != undefined) {
-            query += `name = '${model.name}', `
+            query += `name = ?,`
             values.push(model.name || null)
         }
         if (model.status != undefined) {
-            query += `status = '${model.status}', `
+            query += `status = ?,`
             values.push(model.status || null)
         }
         if (model.user_id != undefined) {
-            query += `user_id = '${model.user_id}', `
+            query += `user_id = ?,`
             values.push(model.user_id)
         }
         query += `updated_at = ? where id = ?`
@@ -60,6 +62,9 @@ export class ServicePackageService {
             return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: {
+                id: id,
+                ...model,
+                updated_at: updated_at
             }
         }
     }
@@ -85,15 +90,15 @@ export class ServicePackageService {
         let query = `select * from ${this.tableName} where 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
 
-        if (key && key.length != 0) {
+        if (key != undefined) {
             query += ` and name like '%${key}%'`
             countQuery += ` and name like '%${key}%'`
         }
-        if (model.name && model.name.length != 0) {
+        if (model.name != undefined) {
             query += ` and name like '%${model.name}%'`
             countQuery += ` and name like '%${model.name}%'`
         }
-        if (model.status) {
+        if (model.status != undefined) {
             query += ` and status = ${model.status}`
             countQuery += ` and status = ${model.status}`
         }

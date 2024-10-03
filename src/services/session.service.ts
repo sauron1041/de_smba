@@ -46,27 +46,27 @@ class SessionService {
         let query = `update ${this.tableName} set `;
         let values = [];
         if (model.name != undefined) {
-            query += `name = '${model.name}', `
+            query += `name = ?, `
             values.push(model.name || null)
         }
         if (model.service_id != undefined) {
-            query += `service_id = '${model.service_id}', `
+            query += `service_id = ?, `
             values.push(model.service_id)
         }
         if (model.customer_id != undefined) {
-            query += `customer_id = '${model.customer_id}', `
+            query += `customer_id = ?, `
             values.push(model.customer_id)
         }
         if (model.staff_id != undefined) {
-            query += `staff_id = '${model.staff_id}', `
+            query += `staff_id = ?, `
             values.push(model.staff_id)
         }
         if (model.status != undefined) {
-            query += `status = '${model.status}', `
+            query += `status = ?, `
             values.push(model.status || null)
         }
         if (model.user_id != undefined) {
-            query += `user_id = '${model.user_id}', `
+            query += `user_id = ?, `
             values.push(model.user_id)
         }
         query += `updated_at = ? where id = ?`
@@ -78,6 +78,9 @@ class SessionService {
             return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: {
+                id: id,
+                ...model,
+                updated_at: updated_at
             }
         }
     }
@@ -103,27 +106,27 @@ class SessionService {
         let query = `select * from ${this.tableName} where 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
 
-        if (key && key.length != 0) {
+        if (key != undefined) {
             query += ` and name like '%${key}%'`
             countQuery += ` and name like '%${key}%'`
         }
-        if (model.name && model.name.length != 0) {
+        if (model.name != undefined) {
             query += ` and name like '%${model.name}%'`
             countQuery += ` and name like '%${model.name}%'`
         }
-        if (model.status) {
+        if (model.status != undefined) {
             query += ` and status = ${model.status}`
             countQuery += ` and status = ${model.status}`
         }
-        if (model.service_id) {
+        if (model.service_id != undefined) {
             query += ` and service_id = ${model.service_id}`
             countQuery += ` and service_id = ${model.service_id}`
         }
-        if (model.customer_id) {
+        if (model.customer_id != undefined) {
             query += ` and customer_id = ${model.customer_id}`
             countQuery += ` and customer_id = ${model.customer_id}`
         }
-        if (model.staff_id) {
+        if (model.staff_id != undefined) {
             query += ` and staff_id = ${model.staff_id}`
             countQuery += ` and staff_id = ${model.staff_id}`
         }

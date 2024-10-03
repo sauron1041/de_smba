@@ -27,11 +27,18 @@ export class ReceptionEmployeeService {
     public acceptAppointment = async (appointment_id: number, status: number) => {
         const checkExistAppointment = await checkExist(this.tableNameAppointment, this.fieldId, appointment_id.toString())
         if (!checkExistAppointment) return new HttpException(400, errorMessages.NOT_FOUND)
-        const nowDate = "2024-09-15";
-        let query = `update ${this.tableNameAppointment} set status = ? where id = ? and date = ?`;
+        const nowDate = "2024-09-19"
+        let query = `update ${this.tableNameAppointment} set status = ? where id = ?`;
+        // let query = `update ${this.tableNameAppointment} set status = ? where id = ? and date = ?`;
         // status 2: accept thanh cong 3: accept that bai
-        const values = [status, appointment_id, nowDate];
+        const values = [status, appointment_id];
+        console.log(values);
+        console.log(query);
+        
+        
         const result = await database.executeQuery(query, values);
+        console.log(result);
+        
         if ((result as any).affectedRows === 0)
             return new HttpException(400, errorMessages.ACCEPT_CHECK_IN_FAILED)
         if (status == 3) {

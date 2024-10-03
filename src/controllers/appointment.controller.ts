@@ -62,8 +62,27 @@ export class AppointmentController {
         const status = req.query.status as any;
         const page = req.query.page as any;
         const limit = req.query.limit as any;
+        const customer_id = req.query.customer_id as any;
+        const employee_id = req.query.employee_id as any;
+        const service_id = req.query.service_id as any;
+        const note = req.query.note as any;
+        const reminder_sent = req.query.reminder_sent as any;
+        const branch_id = req.query.branch_id as any;
+        const user_id = req.query.user_id as any;
+        const date = req.query.date as any;
+        const time = req.query.time as any;
+
         const model: CreateDto = {
             status: status,
+            note: note,
+            reminder_sent: reminder_sent,
+            customer_id: customer_id,
+            employee_id: employee_id,
+            service_id: service_id,
+            branch_id: branch_id,
+            user_id: user_id,
+            date: date,
+            time: time
         }
         let pageInt = parseInt(page as any)
         let limitInt = parseInt(limit as any)

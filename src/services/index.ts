@@ -13,6 +13,7 @@ import { ServicePackageService } from "./servicePackage.service";
 import { ReceptionEmployeeService } from "./receptionEmployee";
 import { TechnicalEmployeeService } from "./technicalEmployee";
 import { EmployeeSkillService } from "./employeeSkill.service";
+import { BranchService } from "./branch.service";
 
 export {
     AuthServices,
@@ -29,5 +30,6 @@ export {
     ServicePackageService,
     ReceptionEmployeeService,
     TechnicalEmployeeService,
-    EmployeeSkillService
+    EmployeeSkillService,
+    BranchService,
 }

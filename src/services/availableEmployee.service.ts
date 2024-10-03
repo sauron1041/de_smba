@@ -37,23 +37,23 @@ export class AvailableEmployeeService {
         let query = `update ${this.tableName} set `;
         let values = [];
         if (model.employee_id != undefined) {
-            query += `employee_id = '${model.employee_id}', `
+            query += `employee_id = ?, `
             values.push(model.employee_id)
         }
         if (model.is_available != undefined) {
-            query += `is_available = '${model.is_available}', `
+            query += `is_available = ?, `
             values.push(model.is_available)
         }
         if (model.branch_id != undefined) {
-            query += `branch_id = '${model.branch_id}', `
+            query += `branch_id = ?, `
             values.push(model.branch_id)
         }
         if (model.position_id != undefined) {
-            query += `position_id = '${model.position_id}', `
+            query += `position_id = ?, `
             values.push(model.position_id)
         }
         if (model.user_id != undefined) {
-            query += `user_id = '${model.user_id}', `
+            query += `user_id = ?, `
             values.push(model.user_id)
         }
         query += `updated_at = ? where id = ?`
@@ -65,6 +65,9 @@ export class AvailableEmployeeService {
             return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: {
+                id: id,
+                ...model,
+                updated_at: updated_at
             }
         }
     }
@@ -90,7 +93,7 @@ export class AvailableEmployeeService {
         let query = `select * from ${this.tableName} where 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
 
-        if (key && key.length != 0) {
+        if (key != undefined) {
             query += ` and name like '%${key}%'`
             countQuery += ` and name like '%${key}%'`
         }

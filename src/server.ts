@@ -19,6 +19,7 @@ import { ReceptionEmployeeRoute } from "routes/receptionEmployee.route";
 import { EmployeeRoute } from "routes/employee.route";
 import { EmployeeSkillRoute } from "routes";
 import { TechnicalEmployeeRoute } from "routes";
+import { BranchRoute } from "routes";
 
 validateEnv();
 const routes = [
@@ -38,7 +39,8 @@ const routes = [
     new ReceptionEmployeeRoute(),
     new EmployeeRoute(),
     new EmployeeSkillRoute(),
-    new TechnicalEmployeeRoute()
+    new TechnicalEmployeeRoute(),
+    new BranchRoute()
 ];
 
 const app = new App(routes);

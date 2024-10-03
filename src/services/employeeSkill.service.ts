@@ -37,11 +37,11 @@ export class EmployeeSkillService {
         let query = `update ${this.tableName} set `;
         let values = [];
         if (model.employee_id != undefined) {
-            query += `employee_id = '${model.employee_id}', `
+            query += `employee_id = ?, `
             values.push(model.employee_id)
         }
         if (model.skill_id != undefined) {
-            query += `skill_id = '${model.skill_id}', `
+            query += `skill_id = ?, `
             values.push(model.skill_id)
         }
         query += `updated_at = ? where id = ?`
@@ -53,6 +53,9 @@ export class EmployeeSkillService {
             return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: {
+                id: id,
+                ...model,
+                updated_at: updated_at
             }
         }
     }
@@ -78,7 +81,7 @@ export class EmployeeSkillService {
         let query = `select * from ${this.tableName} where 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
 
-        if (key && key.length != 0) {
+        if (key != undefined) {
             query += ` and name like '%${key}%'`
             countQuery += ` and name like '%${key}%'`
         }

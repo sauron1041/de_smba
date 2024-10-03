@@ -5,7 +5,6 @@ import { checkExist } from "@core/utils/checkExist";
 import { IPagiantion } from "@core/interfaces";
 import { RowDataPacket } from "mysql2";
 import errorMessages from "@core/config/constants";
-import { ServiceRequestService } from "./serviceRequest.service";
 import { AppointmentService } from "./appointment.service";
 import { CreateDto as Appoinment } from "dtos/appointment/create.dto";
 
@@ -13,7 +12,6 @@ export class CustomerService {
     private tableName = 'users';
     private talbeServiceRequest = 'service_request'
     private fieldId = 'id'
-    private serviceRequest = new ServiceRequestService();
     private appointmentService = new AppointmentService();
     public findById = async (id: number) => {
         const result = await checkExist(this.tableName, this.fieldId, id.toString());
@@ -27,15 +25,15 @@ export class CustomerService {
         let query = `select * from ${this.tableName} where 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
 
-        if (key && key.length != 0) {
+        if (key != undefined) {
             query += ` and name like '%${key}%'`
             countQuery += ` and name like '%${key}%'`
         }
-        if (model.name && model.name.length != 0) {
+        if (model.name != undefined) {
             query += ` and name like '%${model.name}%'`
             countQuery += ` and name like '%${model.name}%'`
         }
-        if (model.status) {
+        if (model.status != undefined) {
             query += ` and status = ${model.status}`
             countQuery += ` and status = ${model.status}`
         }

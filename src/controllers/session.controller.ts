@@ -62,9 +62,18 @@ export class SessionController {
         const status = req.query.status as any;
         const page = req.query.page as any;
         const limit = req.query.limit as any;
+        const customer_id = req.query.customer_id as any;
+        const service_id = req.query.service_id as any;
+        const staff_id = req.query.staff_id as any;
+        const user_id = req.query.user_id as any;
+
         const model: CreateDto = {
             name: name,
             status: status,
+            customer_id: customer_id,
+            service_id: service_id,
+            staff_id: staff_id,
+            user_id: user_id
         }
         let pageInt = parseInt(page as any)
         let limitInt = parseInt(limit as any)

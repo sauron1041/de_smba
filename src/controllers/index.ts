@@ -13,6 +13,7 @@ import { CustomerController } from "./customer.controller";
 import { ServicePackageController } from "./servicePackage.controller";
 import { EmployeeController } from "./employee.controller";
 import { EmployeeSkillController } from "./employeeSkill.controller";
+import { BranchController } from "./branch.controller";
 
 export {
     IndexController,
@@ -29,4 +30,5 @@ export {
     CustomerController,
     EmployeeController,
     EmployeeSkillController,
+    BranchController,
 }

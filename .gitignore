@@ -6,8 +6,9 @@
 # Node artifact files
 node_modules/
 dist/
-logs/
 .env
+logs/
+ca.pem/
 # Compiled Java class files
 *.class
 

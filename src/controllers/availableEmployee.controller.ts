@@ -62,9 +62,21 @@ export class AvailableEmployeeController {
         const status = req.query.status as any;
         const page = req.query.page as any;
         const limit = req.query.limit as any;
+        const branch_id = req.query.branch_id as any;
+        const user_id = req.query.user_id as any;
+        const service_id = req.query.service_id as any;
+        const service_package_id = req.query.service_package_id as any;
+        const total_sessions = req.query.total_sessions as any;
+        const price = req.query.price as any;
+
         const model: CreateDto = {
             name: name,
             status: status,
+            branch_id: branch_id,
+            user_id: user_id,
+            service_package_id: service_package_id,
+            total_sessions: total_sessions,
+            price: price
         }
         let pageInt = parseInt(page as any)
         let limitInt = parseInt(limit as any)

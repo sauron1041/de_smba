@@ -15,7 +15,7 @@ export class ServicePackageRoute implements IRoute {
 
     private initializeRoutes() {
         this.router.post(this.path + '/', AuthMiddleware.authorization, this.serivcePackageRoute.create);
-        this.router.get(this.path + '/', AuthMiddleware.authorization, this.serivcePackageRoute.searchs);
+        this.router.get(this.path + '/', this.serivcePackageRoute.searchs);
         this.router.delete(this.path + '/delete-list', AuthMiddleware.authorization, this.serivcePackageRoute.deleteList);
         this.router.put(this.path + '/update-list-status', AuthMiddleware.authorization, this.serivcePackageRoute.updateListstatus);
         this.router.put(this.path + '/:id', AuthMiddleware.authorization, this.serivcePackageRoute.update);

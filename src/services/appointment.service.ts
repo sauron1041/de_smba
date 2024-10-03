@@ -37,43 +37,43 @@ export class AppointmentService {
         let query = `update ${this.tableName} set `;
         let values = [];
         if (model.date != undefined) {
-            query += `date = '${model.date}', `
+            query += `date = ?, `
             values.push(model.date)
         }
         if (model.time != undefined) {
-            query += `time = '${model.time}', `
+            query += `time = ?, `
             values.push(model.time)
         }
         if (model.status != undefined) {
-            query += `status = '${model.status}', `
+            query += `status = ?, `
             values.push(model.status)
         }
         if (model.customer_id != undefined) {
-            query += `customer_id = '${model.customer_id}', `
+            query += `customer_id = ?, `
             values.push(model.customer_id)
         }
         if (model.employee_id != undefined) {
-            query += `employee_id = '${model.employee_id}', `
+            query += `employee_id = ?, `
             values.push(model.employee_id)
         }
         if (model.service_id != undefined) {
-            query += `service_id = '${model.service_id}', `
+            query += `service_id = ?, `
             values.push(model.service_id)
         }
         if (model.note != undefined) {
-            query += `note = '${model.note}', `
+            query += `note = ?, `
             values.push(model.note)
         }
         if (model.reminder_sent != undefined) {
-            query += `reminder_sent = '${model.reminder_sent}', `
+            query += `reminder_sent = ?, `
             values.push(model.reminder_sent)
         }
         if (model.branch_id != undefined) {
-            query += `branch_id = '${model.branch_id}', `
+            query += `branch_id = ?, `
             values.push(model.branch_id)
         }
         if (model.user_id != undefined) {
-            query += `user_id = '${model.user_id}', `
+            query += `user_id = ?, `
             values.push(model.user_id)
         }
         query += `updated_at = ? where id = ?`
@@ -85,6 +85,9 @@ export class AppointmentService {
             return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: {
+                id: id,
+                ...model,
+                updated_at: updated_at
             }
         }
     }
@@ -110,31 +113,31 @@ export class AppointmentService {
         let query = `select * from ${this.tableName} where 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
 
-        if (key && key.length != 0) {
+        if (key != undefined) {
             query += ` and name like '%${key}%'`
             countQuery += ` and name like '%${key}%'`
         }
-        if (model.status) {
+        if (model.status != undefined) {
             query += ` and status = ${model.status}`
             countQuery += ` and status = ${model.status}`
         }
-        if (model.branch_id) {
+        if (model.branch_id != undefined) {
             query += ` and branch_id = ${model.branch_id}`
             countQuery += ` and branch_id = ${model.branch_id}`
         }
-        if (model.customer_id) {
+        if (model.customer_id != undefined) {
             query += ` and customer_id = ${model.customer_id}`
             countQuery += ` and customer_id = ${model.customer_id}`
         }
-        if (model.employee_id) {
+        if (model.employee_id != undefined) {
             query += ` and employee_id = ${model.employee_id}`
             countQuery += ` and employee_id = ${model.employee_id}`
         }
-        if (model.service_id) {
+        if (model.service_id != undefined) {
             query += ` and service_id = ${model.service_id}`
             countQuery += ` and service_id = ${model.service_id}`
         }
-        if (model.user_id) {
+        if (model.user_id != undefined) {
             query += ` and user_id = ${model.user_id}`
             countQuery += ` and user_id = ${model.user_id}`
         }

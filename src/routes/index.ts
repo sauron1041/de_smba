@@ -14,6 +14,7 @@ import { ServicePackageRoute } from "./servicePackage.route";
 import { EmployeeRoute } from "./employee.route";
 import { EmployeeSkillRoute } from "./employeeSkill.route";
 import { TechnicalEmployeeRoute } from "./tachnicalEmployee.route";
+import { BranchRoute } from "./branch.route";
 
 export {
     IndexRoute,
@@ -31,5 +32,6 @@ export {
     ServicePackageRoute,
     EmployeeRoute,
     EmployeeSkillRoute,
-    TechnicalEmployeeRoute
+    TechnicalEmployeeRoute,
+    BranchRoute,
 }

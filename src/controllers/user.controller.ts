@@ -88,5 +88,16 @@ class UserController {
             next(error);
         }
     }
+    public getProfileById = async (req: Request, res: Response, next: NextFunction) => {
+        const id: number = req.id as any
+        try {
+            const result = await this.userServices.getProfileById(id);
+            if (result instanceof Error)
+                return sendResponse(res, result.status, result.message);
+            return sendResponse(res, 200, message.FIND_BY_ID_SUCCESS, result);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 export default UserController;

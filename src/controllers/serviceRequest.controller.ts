@@ -57,13 +57,30 @@ export class ServiceRequestController {
         }
     }
     public searchs = async (req: Request, res: Response, next: NextFunction) => {
-        const name: string = req.query.name as any;
         const key: string = req.query.key as any;
         const status = req.query.status as any;
         const page = req.query.page as any;
         const limit = req.query.limit as any;
+        const customer_id = req.query.customer_id as any;
+        const employee_id = req.query.employee_id as any;
+        const service_id = req.query.service_id as any;
+        const check_in_time = req.query.check_in_time as any;
+        const serving_at = req.query.serving_at as any;
+        const completed_at = req.query.completed_at as any;
+        const updated_at = req.query.updated_at as any;
+        const user_id = req.query.user_id as any;
+        const branch_id = req.query.branch_id as any;
         const model: CreateDto = {
             status: status,
+            customer_id: customer_id,
+            employee_id: employee_id,
+            service_id: service_id,
+            check_in_time: check_in_time,
+            serving_at: serving_at,
+            completed_at: completed_at,
+            updated_at: updated_at,
+            user_id: user_id,
+            branch_id: branch_id
         }
         let pageInt = parseInt(page as any)
         let limitInt = parseInt(limit as any)

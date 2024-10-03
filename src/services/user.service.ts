@@ -1,9 +1,6 @@
 import { HttpException } from "@core/exceptions";
 import bcryptjs from 'bcryptjs';
 import database from "@core/config/database";
-import sharp from 'sharp';
-import path from 'path';
-import fs from 'fs';
 import { RowDataPacket } from "mysql2/promise";
 import mysql from "mysql2/promise";
 import { Create } from "../dtos/user/create.dto";
@@ -110,7 +107,7 @@ class UserServices {
         let query = `select * from ${this.tableName} where 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
 
-        if (key && key.length != 0) {
+        if (key != undefined) {
             query += ` and (username like '%${key}%' or name like '%${key}%' or phone like '%${key}%' or email like '%${key}%')`
             countQuery += ` and (username like '%${key}%' or name like '%${key}%' or phone like '%${key}%' or email like '%${key}%')`
         }
@@ -203,6 +200,16 @@ class UserServices {
             return new HttpException(500, errorMessages.UPDATE_FAILED);
         }
 
+    }
+    public getProfileById = async (id: number) => {
+        const result = await checkExist(this.tableName, 'id', id.toString());
+        if (result == false)
+            return new HttpException(404, errorMessages.NOT_FOUND, 'id');
+        delete (result as RowDataPacket[])[0].password;
+        delete result[0].token;
+        return {
+            data: (result as RowDataPacket[])[0]
+        };
     }
 }
 

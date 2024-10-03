@@ -38,35 +38,35 @@ export class ServiceRequestService {
         let query = `update ${this.tableName} set `;
         let values = [];
         if (model.status != undefined) {
-            query += `status = ${model.status}, `
+            query += `status = ?, `
             values.push(model.status)
         }
         if (model.user_id != undefined) {
-            query += `user_id = '${model.user_id}', `
+            query += `user_id = ?, `
             values.push(model.user_id)
         }
         if (model.check_in_time != undefined) {
-            query += `check_in_time = '${model.check_in_time}', `
+            query += `check_in_time = ?, `
             values.push(model.check_in_time)
         }
         if (model.serving_at != undefined) {
-            query += `serving_at = '${model.serving_at}', `
+            query += `serving_at = ?, `
             values.push(model.serving_at)
         }
         if (model.completed_at != undefined) {
-            query += `completed_at = '${model.completed_at}', `
+            query += `completed_at = ?, `
             values.push(model.completed_at)
         }
         if (model.employee_id != undefined) {
-            query += `employee_id = '${model.employee_id}', `
+            query += `employee_id = ?, `
             values.push(model.employee_id)
         }
         if (model.service_id != undefined) {
-            query += `service_id = '${model.service_id}', `
+            query += `service_id = ?, `
             values.push(model.service_id)
         }
         if (model.branch_id != undefined) {
-            query += `branch_id = '${model.branch_id}', `
+            query += `branch_id = ?, `
             values.push(model.branch_id)
         }
         query += `updated_at = ? where id = ?`
@@ -83,6 +83,9 @@ export class ServiceRequestService {
             return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: {
+                id: id,
+                ...model,
+                updated_at: updated_at
             }
         }
     }

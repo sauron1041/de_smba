@@ -45,8 +45,10 @@ class ServiceService {
     public update = async (model: CreateDto, id: number) => {
         if (!await checkExist(this.tableName, this.fieldId, id.toString()))
             return new HttpException(400, errorMessages.NOT_EXISTED, this.fieldId);
-        if (await checkExist(this.tableName, this.fieldName, model.name!, id.toString()))
-            return new HttpException(400, errorMessages.NAME_EXIST, this.fieldName);
+        if (model.name != undefined) {
+            if (await checkExist(this.tableName, this.fieldName, model.name!, id.toString()))
+                return new HttpException(400, errorMessages.NAME_EXIST, this.fieldName);
+        }
         let query = `update ${this.tableName} set `;
         let values = [];
         if (model.name != undefined) {
@@ -92,7 +94,9 @@ class ServiceService {
             return new HttpException(400, errorMessages.UPDATE_FAILED);
         return {
             data: {
-                ...model
+                id: id,
+                ...model,
+                updated_at: updated_at
             }
         }
     }
@@ -115,42 +119,51 @@ class ServiceService {
         }
     }
     public searchs = async (key: string, page: number, limit: number, model: CreateDto) => {
-        let query = `select s.*, sp.name as service_package_name from ${this.tableName} s left join service_package sp on s.service_package_id = sp.id where 1=1`;
-        let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} WHERE 1=1`;
+        let query = `select s.* from ${this.tableName} s left join service_package sp on sp.id = s.service_package_id where 1=1 `;
+        let countQuery = `SELECT COUNT(*) as total FROM ${this.tableName} s left join service_package sp on sp.id = s.service_package_id WHERE 1=1`;
+        let values = [];
 
-        if (key && key.length != 0) {
-            query += ` (s.name like '%${key}%' or sp.name like '%${key}%' or s.description like '%${key}%' or s.price like '%${key}%')`
-            countQuery += ` (name like '%${key}%' or sp.name like '%${key}%' or s.description like '%${key}%' or s.price like '%${key}%')`
+        if (key != undefined) {
+            query += ` (s.name like ? or service_package_name like ? or s.description like ? or s.price like ?)`
+            countQuery += ` (s.name like ? or service_package_name like ? or s.description like ? or s.price like ?)`
+            values.push(key, key, key, key)
         }
-        if (model.name && model.name.length != 0) {
-            query += ` and s.name like '%${model.name}%'`
-            countQuery += ` and s.name like '%${model.name}%'`
+        if (model.name != undefined) {
+            query += ` and s.name like ?`;
+            countQuery += ` and s.name like ?`;
+            values.push(`%${model.name}%`);
         }
-        if (model.price) {
-            query += ` and s.price = ${model.price}`
-            countQuery += ` and s.price = ${model.price}`
+        if (model.price != undefined) {
+            query += ` and s.price = ?`
+            countQuery += ` and s.price = ?`
+            values.push(model.price)
         }
-        if (model.status) {
-            query += ` and s.status = ${model.status}`
-            countQuery += ` and s.status = ${model.status}`
+        if (model.status != undefined) {
+            query += ` and s.status = ?`
+            countQuery += ` and s.status = ?`
+            values.push(model.status)
         }
-        if (model.branch_id) {
-            query += ` and s.branch_id = ${model.branch_id}`
-            countQuery += ` and s.branch_id = ${model.branch_id}`
+        if (model.branch_id != undefined) {
+            query += ` and s.branch_id = ?`
+            countQuery += ` and s.branch_id = ?`
+            values.push(model.branch_id)
         }
-        if (model.total_sessions) {
-            query += ` and s.total_sessions = ${model.total_sessions}`
-            countQuery += ` and s.total_sessions = ${model.total_sessions}`
+        if (model.total_sessions != undefined) {
+            query += ` and s.total_sessions = ?`
+            countQuery += ` and s.total_sessions = ?`
+            values.push(model.total_sessions)
         }
-        if (model.user_id) {
-            query += ` and s.user_id = ${model.user_id}`
-            countQuery += ` and s.user_id = ${model.user_id}`
+        if (model.user_id != undefined) {
+            query += ` and s.user_id = ?`
+            countQuery += ` and s.user_id = ?`
+            values.push(model.user_id)
         }
-        if (model.service_package_id) {
-            query += ` and s.service_package_id = ${model.service_package_id}`
-            countQuery += ` and s.service_package_id = ${model.service_package_id}`
+        if (model.service_package_id != undefined) {
+            query += ` and s.service_package_id = ?`
+            countQuery += ` and s.service_package_id = ?`
+            values.push(model.service_package_id)
         }
-        query += ` order by id desc`
+        query += ` order by s.id desc`
         if (limit && !page && limit > 0) {
             query = query + ` LIMIT ` + limit;
         }
@@ -162,11 +175,16 @@ class ServiceService {
             limit: limit,
             totalPage: 0
         }
-        const count = await database.executeQuery(countQuery);
+        console.log("query", query);
+        console.log("values", values);
+
+
+
+        const count = await database.executeQuery(countQuery, values);
         const totalPages = Math.ceil((count as RowDataPacket[])[0].total / limit);
         if (Array.isArray(count) && count.length > 0)
             pagination.totalPage = totalPages
-        const result = await database.executeQuery(query);
+        const result = await database.executeQuery(query, values);
         if (Array.isArray(result) && result.length === 0)
             return new HttpException(404, errorMessages.NOT_FOUND)
         return {
@@ -253,7 +271,7 @@ class ServiceService {
         if (model.name != undefined) {
             query += ` and name like '%${model.name}%'`
         }
-        if(model.id != undefined){
+        if (model.id != undefined) {
             query += ` and id = ?`
             values.push(model.id)
         }

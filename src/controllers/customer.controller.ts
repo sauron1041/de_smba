@@ -24,9 +24,16 @@ export class CustomerController {
         const status = req.query.status as any;
         const page = req.query.page as any;
         const limit = req.query.limit as any;
+        const phone = req.query.phone as any;
+        const email = req.query.email as any;
+        const loyalty_points = req.query.loyalty_points as any;
+
         const model: CreateDto = {
             name: name,
             status: status,
+            phone: phone,
+            email: email,
+            loyalty_points: loyalty_points
         }
         let pageInt = parseInt(page as any)
         let limitInt = parseInt(limit as any)
