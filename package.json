@@ -39,12 +39,12 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "install": "npm install --include=optional sharp --legacy-peer-deps",
+    "install": "npm install --omit=dev --include=optional sharp --legacy-peer-deps",
     "build": "tsc",
     "server": "nodemon -r tsconfig-paths/register src/server.ts",
     "dev": "cross-env NODE_ENV=development nodemon -r tsconfig-paths/register src/server.ts",
     "prod": "cross-env NODE_ENV=production node dist/server.js",
-    "start": "node dist/server.js"
+    "start": "npm install --omit=dev && node dist/server.js"
   },
   "_moduleAliases": {
     "@core": "dist/core",
